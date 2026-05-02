@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سجل إنجاز التقويم الذاتي | نظام توثيق متكامل</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #e8f0f0 0%, #d4e0e8 100%);
+            padding: 24px;
+            color: #1a2a3a;
+        }
+
+        .container {
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* ===== رأس الصفحة ===== */
+        .header {
+            background: linear-gradient(135deg, #1a472a, #2d6a4f);
+            border-radius: 28px;
+            padding: 30px 35px;
+            margin-bottom: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        /* بطاقات الإحصائيات */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 18px 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2d6a4f;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #1a2a3a;
+            margin-top: 8px;
+        }
+
+        .stat-progress {
+            margin-top: 12px;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .stat-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #f5b042, #ff8c00);
+            border-radius: 10px;
+            transition: width 0.4s ease;
+        }
+
+        /* بطاقات الفريق */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 18px;
+            margin-top: 20px;
+        }
+
+        .team-card {
+            background: rgba(255,255,255,0.9);
+            border-radius: 20px;
+            padding: 16px 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .team-card h4 {
+            color: #1a472a;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #f5b042;
+            display: inline-block;
+        }
+
+        .team-card ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .team-card li {
+            background: #e8f0f0;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #1a472a;
+        }
+
+        /* ===== شريط الأدوات ===== */
+        .toolbar {
+            background: white;
+            border-radius: 20px;
+            padding: 16px 24px;
+            margin-bottom: 28px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .search-box input {
+            width: 260px;
+            padding: 10px 18px;
+            border: 1px solid #cbd5e1;
+            border-radius: 40px;
+            font-size: 14px;
+            font-family: inherit;
+            background: white;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #2d6a4f;
+        }
+
+        .filter-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            background: #e8f0f0;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 40px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            color: #1a2a3a;
+        }
+
+        .filter-btn.active {
+            background: #2d6a4f;
+            color: white;
+        }
+
+        .action-btn {
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ===== بطاقات الأقسام ===== */
+        .section-card {
+            background: white;
+            border-radius: 24px;
+            margin-bottom: 28px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #1a472a, #2d6a4f);
+            color: white;
+            padding: 18px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .section-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+        }
+
+        .section-progress {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+        }
+
+        .evidence-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .evidence-table th {
+            background: #f0f4f0;
+            padding: 14px 12px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1a472a;
+            border-bottom: 2px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .evidence-table td {
+            padding: 14px 12px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: middle;
+            background: white;
+            color: #1a2a3a;
+        }
+
+        .indicator-badge {
+            background: #e8f0f0;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: inline-block;
+            color: #1a472a;
+        }
+
+        .evidence-name {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1a2a3a;
+        }
+
+        .link-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            direction: ltr;
+            font-family: monospace;
+            background: #f8fafc;
+        }
+
+        .link-input:focus {
+            outline: none;
+            border-color: #2d6a4f;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 6px;
+        }
+
+        .open-btn, .upload-btn {
+            flex: 1;
+            padding: 6px 8px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .open-btn {
+            background: #2d6a4f;
+            color: white;
+            border: none;
+        }
+
+        .upload-btn {
+            background: #1a5f7a;
+            color: white;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .upload-btn:hover, .open-btn:hover {
+            transform: scale(1.02);
+            opacity: 0.95;
+        }
+
+        .status-select {
+            padding: 8px 12px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            font-size: 0.75rem;
+            font-weight: 500;
+            cursor: pointer;
+            width: 100%;
+            text-align: center;
+        }
+
+        .status-done { background: #dcfce7; color: #15803d; border-color: #86efac; }
+        .status-progress { background: #fef3c7; color: #b45309; border-color: #fcd34d; }
+        .status-pending { background: #fee2e2; color: #b91c1c; border-color: #fecaca; }
+
+        .footer {
+            text-align: center;
+            padding: 24px;
+            background: #1a472a;
+            color: white;
+            border-radius: 24px;
+            margin-top: 32px;
+        }
+
+        .info-note {
+            font-size: 0.65rem;
+            color: #f5b042;
+            margin-top: 6px;
+            display: block;
+        }
+
+        @media print {
+            body { background: white; padding: 10px; }
+            .toolbar, .stats-grid, .action-btn, .filter-buttons, .search-box, .open-btn, .upload-btn { display: none; }
+            .link-input { border: 1px solid #ddd; }
+        }
+
+        @media (max-width: 768px) {
+            .evidence-table th, .evidence-table td { display: block; width: 100%; text-align: right; }
+            .toolbar { flex-direction: column; align-items: stretch; }
+            .search-box input { width: 100%; }
+            .button-group { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📋 سجل إنجاز التقويم الذاتي</h1>
+        <p>نظام متكامل لتوثيق الشواهد، متابعة الإنجاز، وربط الملفات عبر Google Drive</p>
+        
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card"><div class="stat-number" id="totalCount">0</div><div class="stat-label">📊 إجمالي الشواهد</div></div>
+            <div class="stat-card"><div class="stat-number" id="doneCount">0</div><div class="stat-label">✅ منفذة</div></div>
+            <div class="stat-card"><div class="stat-number" id="progressCount">0</div><div class="stat-label">🔄 قيد التنفيذ</div></div>
+            <div class="stat-card"><div class="stat-number" id="pendingCount">0</div><div class="stat-label">⏳ لم تنفذ</div></div>
+            <div class="stat-card"><div class="stat-number" id="linksCount">0</div><div class="stat-label">🔗 روابط مرفقة</div></div>
+            <div class="stat-card"><div class="stat-number" id="progressPercent">0%</div><div class="stat-label">📈 نسبة الإنجاز</div><div class="stat-progress"><div class="stat-progress-bar" id="totalProgressBar" style="width:0%"></div></div></div>
+        </div>
+
+        <div class="team-grid">
+            <div class="team-card"><h4>👤 مدير المدرسة</h4><ul><li>هاني رضوان الددجان</li></ul></div>
+            <div class="team-card"><h4>👥 فريق التقويم الذاتي</h4><ul><li>مختار الامام</li><li>عمرو الخليفي</li><li>سهيل الجهني</li><li>سليمان السحيم</li><li>معاذ الشمسان</li><li>عادل السحيمي</li></ul></div>
+            <div class="team-card"><h4>⭐ منسق التميز</h4><ul><li>خالد البدراني</li></ul></div>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="search-box"><input type="text" id="searchInput" placeholder="🔍 بحث في الشواهد..."></div>
+        <div class="filter-buttons" id="filterButtons"></div>
+        <div><button class="action-btn" id="resetBtn">🔄 إعادة تعيين الكل</button>
+        <button class="action-btn" id="printBtn">🖨️ طباعة التقرير</button></div>
+    </div>
+
+    <div id="sectionsContainer"></div>
+
+    <div class="footer">
+        <p>نظام توثيق التقويم الذاتي | إعداد: خالد البدراني - منسق التميز</p>
+        <p style="font-size:0.7rem; margin-top:8px;">📎 حفظ تلقائي للروابط والحالات | يمكنك رفع الملفات إلى Google Drive ثم لصق رابط المشاركة هنا</p>
+    </div>
+</div>
+
+<script>
+    // رابط Google Drive لرفع الملفات
+    const GOOGLE_DRIVE_URL = "https://drive.google.com/drive/my-drive";
+    
+    // وظيفة فتح Google Drive لرفع ملف
+    window.openGoogleDrive = function() {
+        window.open(GOOGLE_DRIVE_URL, "_blank");
+    }
+
+    const sectionsData = [
+        { title: "👤 مدير المدرسة", role: "مدير المدرسة", evidences: ["سجل الخطة التشغيلية","سجل التكليفات","سجل اللجان والفرق المدرسية","سجل متابعة تنفيذ الخطة","سجل الاجتماعات","سجل تطوير الخطة","سجل التحفيز والتكريم","سجل النمو المهني","سجل استطلاع الرأي","سجل الشراكة المجتمعية","بيانات الكادر الإداري","سجل أحوال الموظفين","سجل الوصف الوظيفي","سجل الصندوق المدرسي","سجل الميزانية التشغيلية","سجل السياسات المالية","سجل ملفات إنجاز المعلمين","سجل خطط توزيع المنهج","سجل لجنة التحصيل الدراسي"] },
+        { title: "👨‍🏫 وكيل الشؤون التعليمية", role: "وكيل الشؤون التعليمية", evidences: ["خطة متابعة السلوك الوظيفي","سجل الزيارات الصفية","سجل استئذان الموظفين","سجل المخالفات","سجل البرامج الوقائية","سجل الحالات الطارئة","سجل النمو المهني","سجل أحوال الموظفين","سجل أنصبة المعلمين","الجدول المدرسي","عينة من ملفات إنجاز المعلمين","سجل الأنشطة العلاجية","متابعة التحضير الإلكتروني","متابعة أداء المتعلمين"] },
+        { title: "👨‍🎓 وكيل الشؤون الطلابية", role: "وكيل الشؤون الطلابية", evidences: ["سجل الانضباط المدرسي","سجل الموهوبين","سجل المخالفات السلوكية","سجل البرامج العلاجية","سجل التواصل مع أولياء الأمور","سجل تحدي القراءة","سجل نتائج الاختبارات الوطنية","عينة الأنشطة الصفية","سجل العمل التطوعي","نسبة الملتزمين بالقواعد","سجل التوجيه الطلابي"] },
+        { title: "🏫 وكيل الشؤون المدرسية", role: "وكيل الشؤون المدرسية", evidences: ["ملف الأمن والسلامة","سجل الموجه الصحي","سجل الصيانة","سجل خطط الإخلاء"] },
+        { title: "🎯 رائد النشاط", role: "رائد النشاط", evidences: ["سجل الأنشطة والبرامج","سجل النشرات","سجل مجالس الحوار","سجل المسابقات"] },
+        { title: "💬 الموجه الطلابي", role: "الموجه الطلابي", evidences: ["سجل التوجيه والإرشاد","سجل التحفيز والتكريم","سجل التوقيع على القواعد","سجل تعزيز السلوك","سجل مجالس أولياء الأمور","سجل البرامج","سجل العمل التطوعي"] },
+        { title: "📚 المعلمون", role: "المعلمون", evidences: ["استبانة دافعية التعليم","قياس آراء الطلاب","البيانات الإحصائية","تقويم فاعلية التدريس","قياس مستوى التحصيل","قياس اتجاهات الطلاب","قياس مهارات التفكير","توثيق الأعمال","الزيارات الصفية"] }
+    ];
+
+    let currentFilter = "all";
+    let searchTerm = "";
+    let totalEvidences = sectionsData.reduce((sum, s) => sum + s.evidences.length, 0);
+    document.getElementById("totalCount").innerText = totalEvidences;
+
+    function updateStats() {
+        let done = 0, progress = 0, pending = 0, links = 0;
+        for (let si = 0; si < sectionsData.length; si++) {
+            for (let ei = 0; ei < sectionsData[si].evidences.length; ei++) {
+                const status = localStorage.getItem(`status_${si}_${ei}`) || "pending";
+                if (status === "done") done++;
+                if (status === "progress") progress++;
+                if (status === "pending") pending++;
+                if (localStorage.getItem(`link_${si}_${ei}`)) links++;
+            }
+        }
+        document.getElementById("doneCount").innerText = done;
+        document.getElementById("progressCount").innerText = progress;
+        document.getElementById("pendingCount").innerText = pending;
+        document.getElementById("linksCount").innerText = links;
+        const percent = totalEvidences ? Math.round((done / totalEvidences) * 100) : 0;
+        document.getElementById("progressPercent").innerText = percent + "%";
+        document.getElementById("totalProgressBar").style.width = percent + "%";
+    }
+
+    function saveStatus(si, ei, val) { localStorage.setItem(`status_${si}_${ei}`, val); updateStats(); updateSectionProgress(si); }
+    function saveLink(si, ei, val) { localStorage.setItem(`link_${si}_${ei}`, val); updateStats(); }
+    function openLink(si, ei) { const link = localStorage.getItem(`link_${si}_${ei}`); if (link && link.trim()) window.open(link, "_blank"); else alert("❌ لا يوجد رابط محفوظ لهذا الشاهد"); }
+    function updateSectionProgress(si) { let done = 0; for (let i=0;i<sectionsData[si].evidences.length;i++) if (localStorage.getItem(`status_${si}_${i}`) === "done") done++; const percent = sectionsData[si].evidences.length ? Math.round((done/sectionsData[si].evidences.length)*100) : 0; const span = document.getElementById(`prog_${si}`); if (span) span.innerText = `📊 ${percent}%`; }
+
+    function renderSections() {
+        const container = document.getElementById("sectionsContainer");
+        let html = "";
+        for (let si=0; si<sectionsData.length; si++) {
+            const sec = sectionsData[si];
+            if (currentFilter !== "all" && sec.role !== currentFilter) continue;
+            let secDone = 0;
+            for (let i=0;i<sec.evidences.length;i++) if (localStorage.getItem(`status_${si}_${i}`) === "done") secDone++;
+            let secPercent = sec.evidences.length ? Math.round((secDone/sec.evidences.length)*100) : 0;
+            let hasMatch = searchTerm === "" || sec.evidences.some(ev => ev.includes(searchTerm));
+            if (!hasMatch) continue;
+            html += `<div class="section-card"><div class="section-header"><div class="section-title">${sec.title}</div><div class="section-progress" id="prog_${si}">📊 ${secPercent}%</div></div><table class="evidence-table"><thead><tr><th style="width:50px">#</th><th>الشاهد المطلوب</th><th style="width:35%">🔗 رابط الشاهد (Google Drive)</th><th style="width:110px">📌 الحالة</th></tr></thead><tbody>`;
+            for (let ei=0; ei<sec.evidences.length; ei++) {
+                const ev = sec.evidences[ei];
+                if (searchTerm && !ev.includes(searchTerm)) continue;
+                const savedLink = localStorage.getItem(`link_${si}_${ei}`) || "";
+                const savedStatus = localStorage.getItem(`status_${si}_${ei}`) || "pending";
+                let statusClass = savedStatus === "done" ? "status-done" : (savedStatus === "progress" ? "status-progress" : "status-pending");
+                html += `
+                    <tr>
+                        <td style="text-align:center"><span class="indicator-badge">${ei+1}</span></td>
+                        <td><span class="evidence-name">${ev}</span></td>
+                        <td>
+                            <input type="text" class="link-input" id="link_${si}_${ei}" placeholder="الصق رابط Google Drive هنا..." value="${savedLink.replace(/"/g,"&quot;")}" onblur="saveLink(${si},${ei},this.value)">
+                            <div class="button-group">
+                                <button class="open-btn" onclick="openLink(${si},${ei})">📂 فتح الرابط</button>
+                                <button class="upload-btn" onclick="window.open('https://drive.google.com/drive/my-drive','_blank')">☁️ رفع إلى Google Drive</button>
+                            </div>
+                            <small class="info-note">💡 ارفع الملف أولاً إلى Google Drive ، ثم انسخ رابط المشاركة والصقه هنا</small>
+                        </td>
+                        <td style="text-align:center">
+                            <select class="status-select ${statusClass}" onchange="saveStatus(${si},${ei},this.value)">
+                                <option value="pending" ${savedStatus==="pending" ? "selected" : ""}>⏳ لم ينفذ</option>
+                                <option value="progress" ${savedStatus==="progress" ? "selected" : ""}>🔄 جاري العمل</option>
+                                <option value="done" ${savedStatus==="done" ? "selected" : ""}>✅ منفذ</option>
+                            </select>
+                        </td>
+                    </tr>
+                `;
+            }
+            html += `</tbody></table></div>`;
+        }
+        container.innerHTML = html || `<div style='text-align:center;padding:40px;background:white;border-radius:24px;'>❌ لا توجد شواهد تطابق البحث</div>`;
+        updateStats();
+    }
+
+    function resetAll() { if(confirm("⚠️ هل أنت متأكد من إعادة تعيين جميع الحالات والروابط؟")){ localStorage.clear(); renderSections(); } }
+    document.getElementById("resetBtn").onclick = resetAll;
+    document.getElementById("printBtn").onclick = () => window.print();
+
+    const roles = ["all", "مدير المدرسة", "وكيل الشؤون التعليمية", "وكيل الشؤون الطلابية", "وكيل الشؤون المدرسية", "رائد النشاط", "الموجه الطلابي", "المعلمون"];
+    const filterDiv = document.getElementById("filterButtons");
+    filterDiv.innerHTML = roles.map(r => `<button class="filter-btn" data-filter="${r}">${r === "all" ? "الكل" : r}</button>`).join("");
+    document.querySelectorAll(".filter-btn").forEach(btn => btn.onclick = function(){ document.querySelectorAll(".filter-btn").forEach(b=>b.classList.remove("active")); this.classList.add("active"); currentFilter = this.dataset.filter; renderSections(); });
+    document.getElementById("searchInput").oninput = e => { searchTerm = e.target.value; renderSections(); };
+    renderSections();
+</script>
+</body>
+</html>
